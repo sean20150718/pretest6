@@ -1,0 +1,60 @@
+//cypress/e2e/spec.cy.js
+// Test 1 Protected Route /profile-sg​
+describe('login / logout flow specification', () => {
+  it('cannot navigate to /profile-sg without being logged in', () => {
+    cy.visit("/profile-sg")
+    .url().should('include', "/login");
+  });
+});
+
+
+
+// Test 2 Rejecting Invalid Github Users​
+it('rejects a login attempt by an invalid github user: !!!', () => {
+  cy.visit("/login")
+  .get('input[name="username"]').type("!!!").type("{enter}")
+  .url().should('include', "/login");
+});
+
+
+// Test 3 Granting Access to Valid Github Users
+it('successfully authenticates a valid github user: test-account and logs out', () => {
+  cy.visit("/login")
+  .get('input[name="username"]').type("test-account").type("{enter}")
+  .url().should('include', '/profile-sg')
+  .get("nav").contains("Logout").click()
+  .url().should('include', "/login");
+}); 
+
+//cypress.config.js 
+const { defineConfig } = require('cypress');
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+    baseUrl: 'http://localhost:3000',
+  },
+});
+
+
+//.github/workflows/ci.yaml
+
+name: CI
+on: [push]
+jobs:
+  run-tests:
+    name: Lint and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install packages
+        run: npm ci
+
+      - name: Run ESlint
+        run: npm run lint
+

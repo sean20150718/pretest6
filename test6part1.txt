@@ -1,0 +1,235 @@
+//practice.test.js
+describe('some tests', () => {
+    // test definitions 
+    test('test name', () => {
+        // test "expectations" here
+        let x = 5;
+        expect(x).toBe(5);
+    });
+});
+
+test('test name', () => {
+    // test "expectations" here
+    let x = 5;
+    expect(x).toBe(5);  
+});
+
+let sum = (num1, num2) => num1 + num2;
+
+describe('Practice Tests', () => {
+  test('sum function adds 1 + 2 to equal 3', () => {
+    expect(sum(1, 2)).toBe(3);
+  });
+});
+
+
+// Truthiness​
+
+test('null', () => {
+    const n = null;
+    expect(n).toBeNull();
+    expect(n).toBeDefined();
+    expect(n).not.toBeUndefined();
+    expect(n).not.toBeTruthy();
+    expect(n).toBeFalsy();
+});
+
+test('zero', () => {
+    const z = 0;
+    expect(z).not.toBeNull();
+    expect(z).toBeDefined();
+    expect(z).not.toBeUndefined();
+    expect(z).not.toBeTruthy();
+    expect(z).toBeFalsy();
+});
+
+
+// Numbers​
+test('two plus two', () => {
+    const value = 2 + 2;
+    expect(value).toBeGreaterThan(3);
+    expect(value).toBeGreaterThanOrEqual(3.5);
+    expect(value).toBeLessThan(5);
+    expect(value).toBeLessThanOrEqual(4.5);
+  
+    // toBe and toEqual are equivalent for numbers
+    expect(value).toBe(4);
+    expect(value).toEqual(4);
+});
+
+test('adding floating point numbers', () => {
+    const value = 0.1 + 0.2;
+    //expect(value).toBe(0.3); This won't work because of rounding error
+    expect(value).toBeCloseTo(0.3); // This works.
+});
+
+
+// Strings​
+
+test('there is no I in team', () => {
+  expect('team').not.toMatch(/I/);
+});
+
+test('but there is a "stop" in Christoph', () => {
+  expect('Christoph').toMatch(/stop/);
+});
+
+
+// Arrays and iterables​
+const shoppingList = ['diapers', 'kleenex', 'trash bags', 'paper towels', 'milk'];
+
+test('the shopping list has milk on it', () => {
+  expect(shoppingList).toContain('milk');
+  expect(new Set(shoppingList)).toContain('milk');
+});
+
+
+// Exceptions​
+
+function compileAndroidCode() {
+  throw new Error('you are using the wrong JDK');
+}
+
+test('compiling android goes as expected', () => {
+  expect(() => compileAndroidCode()).toThrow();
+  expect(() => compileAndroidCode()).toThrow(Error);
+
+  // You can also use the exact error message or a regexp
+  expect(() => compileAndroidCode()).toThrow('you are using the wrong JDK');
+  expect(() => compileAndroidCode()).toThrow(/JDK/);
+});
+
+//clickCounter.test.js
+import ClickCounter from '@/components/clickCounter';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+import { render } from '@testing-library/react';
+
+describe('ClickCounter Component', () => {
+    test('increase count by 1 when clicked', async () => {
+        const user = userEvent.setup();
+        const { container } = render(<ClickCounter />);
+      
+        // attempt to fetch the "button" element
+        const button = container.querySelector('button');
+      
+        // ensure there the "button" element exists
+        expect(button).toBeTruthy();
+      
+        // ensure that the "button" text contains "0" to start
+        expect(button.innerHTML).toContain('0');
+      
+        // simulate a button click event
+        await user.click(button);
+      
+        // ensure that the "button" context contains "1" after the event
+        expect(button.innerHTML).toContain('1');
+    });
+});
+//clickCounter.js
+import {useState} from 'react'
+export default function ClickCounter(){
+  const [count, setCount] = useState(0);
+  return <button onClick={()=>{setCount(count + 1)}}>Clicked {count} Times</button>
+}
+
+//index.test.js
+
+import Home from '@/pages/index';
+import '@testing-library/jest-dom';
+import { render } from '@testing-library/react';
+
+describe('Home Page', () => {
+    test("renders at least one link to https://vercel.com in the first child of 'main' ", () => {
+        const {container} = render(<Home />);
+
+        // attempt to fetch the first child element within the "main" element
+        const child = container.querySelector('main *');
+
+        // ensure the the child element exists
+        expect(child).toBeTruthy();
+
+        // get all "a" elements within the child element
+        const childLinks = child.querySelectorAll("a");
+
+        // ensure there is at least 1 "a" element within the child
+        expect(childLinks.length).toBeGreaterThan(0); // at least one link
+
+        // count the number of links that include "https://vercel.com"
+        let vercelLinks = 0;
+
+        childLinks.forEach(link => {
+            if(link.href.includes("https://vercel.com"))
+            vercelLinks++;
+        });
+
+        // ensure that there is at least one link that includes "https://vercel.com"
+        expect(vercelLinks).toBeGreaterThan(0); // at least one vercel link
+    });
+});
+
+//vehicles.test.js
+import { createMocks } from 'node-mocks-http';
+import handler from '@/pages/api/vehicles/[id]';
+
+
+describe('/api/vehicles/[id] Route', () => {
+    test('returns a vehicle for a specified ID', async () => {
+        const { req, res } = createMocks({
+          method: 'GET',
+          query: {
+            id: '1',
+          },
+        });
+      
+        await handler(req, res);
+      
+        expect(res._getStatusCode()).toBe(200);
+        expect(JSON.parse(res._getData())).toEqual(
+          expect.objectContaining({
+            id: 1,
+          })
+        );
+
+//pages/api/vehicles/id.js
+let vehicleData = [
+    {
+      id: 1,
+      year: 1994,
+      make: 'Suzuki',
+      model: 'SJ',
+      vin: 'JN8AZ2KR6CT544012',
+    },
+    {
+      id: 2,
+      year: 1999,
+      make: 'Chrysler',
+      model: '300',
+      vin: '1B3CC5FB5AN648885',
+    },
+    {
+      id: 3,
+      year: 2005,
+      make: 'BMW',
+      model: 'X3',
+      vin: 'JTHBP5C29E5152916',
+    },
+  ];
+  
+  export default function handler(req, res) {
+    const { method } = req;
+    const { id } = req.query;
+  
+    switch (method) {
+      case 'GET':
+        let vehicleIndex = vehicleData.findIndex((v) => v.id == id);
+        // if a vehicleIndex was found, return the corresponding vehicle, else send a 404 error
+        vehicleIndex != -1 ? res.status(200).json(vehicleData[vehicleIndex]) : res.status(404).end();
+        break;
+  
+      default:
+        // send an error message back, indicating that the method is not supported by this route
+        res.setHeader('Allow', ['GET']);
+        res.status(405).end(`Method ${method} Not Allowed`);
+    }
+  }
